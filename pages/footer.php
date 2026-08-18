@@ -1,30 +1,30 @@
-  <!-- ─── فوتر ─── -->
+  <!-- ━━━ فوتر ━━━ -->
   <footer class="footer">
     <div class="footer-inner">
       <div class="footer-brand">
-        <a href="../index.php" class="logo"><span class="logo-icon">◈</span> نوآوا</a>
-        <p>استودیو خلاقیت دیجیتال — ساختن آینده، پیکسل به پیکسل.</p>
+        <a href="../index.php" class="logo"><span class="logo-icon">✨</span> نوا</a>
+        <p>استودیو خلاقیت دیجیتال — ساخته شده با عشق و خلاقیت.</p>
       </div>
       <div class="footer-links">
-        <h4>دسترسی سریع</h4>
+        <h4>صفحات اصلی</h4>
         <a href="../index.php">خانه</a>
         <a href="services.php">خدمات</a>
         <a href="about.php">درباره ما</a>
-        <a href="portfolio.php">نمونه‌کارها</a>
+        <a href="portfolio.php">نمونه کارها</a>
         <a href="contact.php">تماس</a>
       </div>
       <div class="footer-links">
         <h4>خدمات</h4>
-        <a href="services.php">طراحی وب</a>
-        <a href="services.php">اپلیکیشن</a>
-        <a href="services.php">برندینگ</a>
-        <a href="services.php">سئو</a>
+        <a href="services.php#web-design">طراحی وب</a>
+        <a href="services.php#mobile-app">اپلیکیشن موبایل</a>
+        <a href="services.php#branding">برندینگ</a>
+        <a href="services.php#seo">سئو</a>
       </div>
     </div>
     <div class="footer-bottom">
-      © ۱۴۰۴ استودیو نوآوا — ساخته شده با 💜 و کد
+      © ۱۴۰۴ استودیو نوا — ساخته شده با ❤️ و کد
       <span class="footer-sep">·</span>
-      <a href="../admin.php" class="admin-link">⚙️ پنل مدیریت</a>
+      <a href="../admin.php" class="admin-link">🔧 پنل مدیریت</a>
     </div>
   </footer>
 

@@ -1,8 +1,535 @@
 /* ═══════════════════════════════════════════════
-   نوآوا — استایل پنل مدیریت (ترکیب فایل‌های ماژولار)
+   نوآوا — پایه‌های استایل پنل مدیریت
    ═══════════════════════════════════════════════ */
 
-@import url('css/admin-themes.css');
-@import url('css/admin-base.css');
-@import url('css/admin-components.css');
-@import url('css/admin-views.css');
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  direction: rtl;
+  min-height: 100vh;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+input, textarea, select {
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+.grad {
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}/* ═══════════════════════════════════════════════
+   نوآوا — کامپوننت‌های مشترک پنل مدیریت
+   ═══════════════════════════════════════════════ */
+
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.toast.show {
+  opacity: 1;
+}
+
+.toast.ok {
+  background: var(--success);
+  color: white;
+}
+
+.toast.err {
+  background: var(--danger);
+  color: white;
+}
+
+.field {
+  margin-bottom: 1.5rem;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text2);
+}
+
+.field input,
+.field textarea,
+.field select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  transition: border-color var(--transition);
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.btn-save,
+.btn-reset,
+.btn-danger {
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn-save {
+  background: var(--primary);
+  color: white;
+  border: none;
+}
+
+.btn-save:hover {
+  background: var(--primary2);
+}
+
+.btn-reset {
+  background: var(--surface2);
+  color: var(--text);
+  border: none;
+}
+
+.btn-reset:hover {
+  background: var(--border);
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: white;
+  border: none;
+}
+
+.btn-danger:hover {
+  background: #dc2626;
+}
+
+.mini-btn {
+  background: var(--surface2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.mini-btn:hover {
+  background: var(--border);
+}
+
+.mini-btn.warn {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.mini-btn.warn:hover {
+  background: var(--danger);
+  color: white;
+}/* ═══════════════════════════════════════════════
+   نوآوا — مدیریت تم پنل مدیریت
+   ═══════════════════════════════════════════════ */
+
+:root {
+  --bg: #0b0b1e;
+  --bg2: #12122b;
+  --surface: rgba(255, 255, 255, 0.04);
+  --surface2: rgba(255, 255, 255, 0.08);
+  --border: rgba(255, 255, 255, 0.09);
+  --text: #e8e8f0;
+  --text2: #9d9db5;
+  --primary: #8b5cf6;
+  --accent: #06b6d4;
+  --danger: #ef4444;
+  --success: #10b981;
+  --gradient: linear-gradient(135deg, #8b5cf6, #06b6d4);
+  --radius: 14px;
+}
+
+[data-theme="light"] {
+  --bg: #f2f2fa;
+  --bg2: #e9e9f5;
+  --surface: rgba(255, 255, 255, 0.85);
+  --surface2: rgba(0, 0, 0, 0.05);
+  --border: rgba(0, 0, 0, 0.09);
+  --text: #191930;
+  --text2: #55557a;
+}/* ═══════════════════════════════════════════════
+   نوآوا — استایل‌های بخش‌های مختلف پنل مدیریت
+   ═══════════════════════════════════════════════ */
+
+/*** ─── صفحه ورود ─── ***/
+.login-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1rem;
+}
+
+.login-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.login-logo {
+  font-size: 2.5rem;
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.login-card h1 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.login-sub {
+  color: var(--text2);
+  margin-bottom: 2rem;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.login-btn {
+  background: var(--primary);
+  color: white;
+  padding: 0.75rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.login-btn:hover {
+  background: var(--primary2);
+}
+
+.login-error {
+  color: var(--danger);
+  font-size: 0.9rem;
+  margin-top: 1rem;
+}
+
+.login-back {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.login-back a {
+  color: var(--text2);
+  text-decoration: none;
+}
+
+/*** ─── پنل مدیریت ─── ***/
+.admin-app {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 250px;
+  background: var(--bg2);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.side-logo {
+  padding: 1.5rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  border-bottom: 1px solid var(--border);
+}
+
+.side-logo span {
+  color: var(--text2);
+  font-weight: 400;
+}
+
+.side-nav {
+  padding: 1rem 0;
+}
+
+.side-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  border: none;
+  color: var(--text2);
+  text-align: right;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.side-link:hover,
+.side-link.active {
+  background: var(--surface);
+  color: var(--text);
+}
+
+.side-link.danger {
+  color: var(--danger);
+}
+
+.side-link.danger:hover {
+  background: var(--danger);
+  color: white;
+}
+
+.badge {
+  background: var(--danger);
+  color: white;
+  font-size: 0.7rem;
+  padding: 0.2rem 0.4rem;
+  border-radius: 50%;
+  margin-right: auto;
+}
+
+.side-foot {
+  padding: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.main {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.topbar h2 {
+  font-size: 1.5rem;
+}
+
+.topbar-sub {
+  color: var(--text2);
+  font-size: 0.9rem;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.icon-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.icon-btn:hover {
+  background: var(--surface2);
+}
+
+.topbar-user {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text2);
+}
+
+.warn-banner {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid var(--danger);
+  border-radius: var(--radius);
+  padding: 1rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.warn-banner b {
+  color: var(--danger);
+}
+
+/*** ─── داشبورد ─── ***/
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.stat-ico {
+  font-size: 1.5rem;
+  color: var(--primary);
+}
+
+.stat-big {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.stat-cap {
+  color: var(--text2);
+  font-size: 0.9rem;
+}
+
+.chart {
+  height: 200px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin: 1rem 0;
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.msg-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/*** ─── پیام‌ها ─── ***/
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+}
+
+.search {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.toolbar-btns {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/*** ─── مدیریت محتوا ─── ***/
+.form-panel {
+  max-width: 800px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.form-grid .full {
+  grid-column: 1 / -1;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.form-note {
+  color: var(--text2);
+  font-size: 0.9rem;
+}
+
+/*** ─── ناحیه خطر ─── ***/
+.danger-zone {
+  border: 1px solid var(--danger);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+
+.danger-zone h3 {
+  color: var(--danger);
+}
+
+.danger-zone p {
+  color: var(--text2);
+  margin-bottom: 1.5rem;
+}

@@ -1,0 +1,10 @@
+{
+  "items": [
+    {
+      "user": "admin",
+      "pass_hash": "$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoE5a8ZzJw8fPJj0w7v3X0Xx7z7v3X0X",
+      "must_change": true,
+      "created": "2024-08-18T00:00:00+00:00"
+    }
+  ]
+}

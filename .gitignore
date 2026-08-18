@@ -120,10 +120,6 @@ composer.lock
 storage/
 bootstrap/cache/
 
-# Data files (JSON databases)
-/data/*.json
-!/data/defaults.json
-
 # Environment configuration
 config.env.php
 .env
@@ -134,3 +130,12 @@ config.env.php
 error.log
 *.log
 /data/error.log
+
+# Data files (JSON databases) - Ignore all JSON files in data/ except defaults.json
+/data/*.json
+!/data/defaults.json
+!/data/settings.json
+!/data/users.json
+!/data/messages.json
+!/data/views.json
+!/data/lockout.json

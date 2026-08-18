@@ -51,7 +51,14 @@ header('Cache-Control: no-store, max-age=0');
 define('DATA_DIR', __DIR__ . '/data');
 
 // بارگذاری متغیرهای محیطی
-require __DIR__ . '/config.env.php';
+if (is_file(__DIR__ . '/config.env.php')) {
+    require __DIR__ . '/config.env.php';
+} else {
+    // تنظیمات پیش‌فرض
+    define('DEFAULT_ADMIN_USER', 'admin');
+    define('DEFAULT_ADMIN_PASS', bin2hex(random_bytes(8)));
+    define('ERROR_LOG_PATH', __DIR__ . '/data/error.log');
+}
 
 // اگر رمز پیش‌فرض خالی باشد، از کاربر خواسته می‌شود که در اولین ورود آن را تنظیم کند.
 if (DEFAULT_ADMIN_PASS === '') {
