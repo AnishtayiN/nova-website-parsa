@@ -66,3 +66,31 @@
     style.css / admin.css
     data/        دیتابیس‌های JSON (خودکار در اولین اجرا ساخته می‌شوند)
     .htaccess    محافظت Apache
+
+---
+
+## آپلود به GitHub
+
+برای آپلود پروژه به GitHub، از یکی از روش‌های زیر استفاده کنید:
+
+### روش 1: خودکار (با اسکریپت)
+1. فایل `upload_to_github.bat` را اجرا کنید
+2. آدرس ریپازیتوری GitHub خود را وارد کنید
+3. اسکریپت بقیه کارها را انجام می‌دهد
+
+### روش 2: دستی
+1. در GitHub، ریپازیتوری جدید بسازید (بدون README)
+2. دستورات زیر را اجرا کنید:
+   ```bash
+   cd G:/github/parsa/website
+   git remote add origin https://github.com/YOUR_USERNAME/nova-website.git
+   git branch -M master
+   git push -u origin master
+   ```
+
+### روش 3: با استفاده از اسکریپت Bash
+   ```bash
+   ./push_to_github.sh
+   ```
+
+> توجه: ریپازیتوری باید خالی باشد (بدون README، .gitignore، یا license).
