@@ -66,7 +66,8 @@ if (defined('DEBUG_MODE') && DEBUG_MODE) {
 } else {
     error_reporting(E_ALL);
     ini_set('display_errors', 0);
-    ini_set('log_errors', 1);
+ 
+   ini_set('log_errors', 1);
     ini_set('error_log', __DIR__ . '/error.log');
 }
 
@@ -256,6 +257,21 @@ function log_error($message) {
     if (DEBUG_MODE) {
         error_log('[NOVA ERROR] ' . date('Y-m-d H:i:s') . ' - ' . $message);
     }
+}
+
+/**
+ * خواندن داده از دیتابیس JSON (سازگاری با کدهای قدیمی)
+ */
+function db_read($filename, $default = []) {
+    $data = get_json_data($filename);
+    return !empty($data) ? $data : $default;
+}
+
+/**
+ * نوشتن داده در دیتابیس JSON (سازگاری با کدهای قدیمی)
+ */
+function db_write($filename, $data) {
+    return save_json_data($filename, $data);
 }
 
 // پایان فایل config.php
