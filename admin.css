@@ -1,0 +1,8 @@
+/* ═══════════════════════════════════════════════
+   نوآوا — استایل پنل مدیریت (ترکیب فایل‌های ماژولار)
+   ═══════════════════════════════════════════════ */
+
+@import url('css/admin-themes.css');
+@import url('css/admin-base.css');
+@import url('css/admin-components.css');
+@import url('css/admin-views.css');

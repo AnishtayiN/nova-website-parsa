@@ -1,0 +1,40 @@
+/* ═══════════════════════════════════════════════
+   نوآوا — مدیریت تم (تاریک/روشن)
+   ═══════════════════════════════════════════════ */
+
+body {
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+.theme-toggle {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.theme-toggle:hover {
+  background: var(--surface2);
+}
+
+.theme-toggle .sun,
+.theme-toggle .moon {
+  font-size: 1.2rem;
+  transition: opacity var(--transition);
+}
+
+[data-theme="light"] .moon,
+[data-theme="dark"] .sun {
+  opacity: 0;
+}
+
+[data-theme="light"] .sun,
+[data-theme="dark"] .moon {
+  opacity: 1;
+}

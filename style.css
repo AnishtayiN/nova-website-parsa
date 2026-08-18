@@ -1,0 +1,310 @@
+/* ═══════════════════════════════════════════════
+   نوآوا — استایل اصلی (ترکیب فایل‌های ماژولار)
+   ═══════════════════════════════════════════════ */
+
+@import url('css/variables.css');
+@import url('css/base.css');
+@import url('css/components.css');
+@import url('css/animations.css');
+@import url('css/themes.css');
+@import url('css/sections.css');
+@import url('css/testimonials.css');
+@import url('css/contact.css');
+@import url('css/pages.css');
+
+/* ─── لودینگ اولیه ─── */
+.preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  transition: opacity 0.5s ease;
+}
+
+.preloader-inner {
+  text-align: center;
+}
+
+.preloader-logo {
+  font-size: 3rem;
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.preloader-bar {
+  width: 200px;
+  height: 4px;
+  background: var(--surface);
+  border-radius: 2px;
+  margin: 1rem auto;
+  overflow: hidden;
+}
+
+.preloader-bar-fill {
+  height: 100%;
+  background: var(--gradient);
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+.preloader-pct {
+  color: var(--text2);
+  font-size: 0.9rem;
+}
+
+/* ─── نشانگر سفارشی ─── */
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1000;
+  transition: transform 0.1s ease;
+}
+
+.cursor-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--primary);
+  opacity: 0.8;
+}
+
+.cursor-ring {
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--primary);
+  opacity: 0.3;
+}
+
+/* ─── نوار پیشرفت اسکرول ─── */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 4px;
+  background: var(--gradient);
+  width: 0%;
+  z-index: 1000;
+}
+
+/* ─── کانواس کانفتی ─── */
+#confetti,
+#particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ─── پس‌زمینه ذرات ─── */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.2;
+  z-index: -1;
+}
+
+.blob-1 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, #8b5cf6, transparent);
+  top: -100px;
+  right: -100px;
+}
+
+.blob-2 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, #06b6d4, transparent);
+  bottom: -150px;
+  left: -150px;
+}
+
+.blob-3 {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, #ec4899, transparent);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* ─── نوار متحرک ─── */
+.marquee {
+  background: var(--surface);
+  padding: 1rem 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.marquee-track {
+  display: inline-block;
+  animation: marquee 30s linear infinite;
+}
+
+.marquee-track span {
+  display: inline-block;
+  padding: 0 1.5rem;
+  color: var(--text2);
+}
+
+.mq-star {
+  color: var(--primary);
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ─── تماس ─── */
+.contact-form {
+  padding: 2rem;
+  max-width: 600px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text2);
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.form-success {
+  color: var(--success);
+  margin-top: 1rem;
+  display: none;
+}
+
+/* ─── فوتر ─── */
+.footer {
+  background: var(--bg2);
+  padding: 3rem 0 1.5rem;
+}
+
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+}
+
+.footer-brand .logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  display: inline-block;
+}
+
+.footer-links h4 {
+  margin-bottom: 1rem;
+  color: var(--text);
+}
+
+.footer-links a {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text2);
+  transition: color var(--transition);
+}
+
+.footer-links a:hover {
+  color: var(--text);
+}
+
+.footer-bottom {
+  max-width: 1200px;
+  margin: 2rem auto 0;
+  padding: 1rem;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  color: var(--text2);
+  font-size: 0.9rem;
+}
+
+.footer-sep {
+  margin: 0 0.5rem;
+}
+
+.admin-link {
+  color: var(--accent);
+}
+
+/* ─── دکمه بازگشت به بالا ─── */
+.back-to-top {
+  position: fixed;
+  bottom: 2rem;
+  left: 2rem;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition);
+  z-index: 1000;
+}
+
+.back-to-top:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.btt-track {
+  fill: none;
+  stroke: var(--surface2);
+  stroke-width: 4;
+}
+
+.btt-circle {
+  fill: none;
+  stroke: url(#bttGrad);
+  stroke-width: 4;
+  stroke-dasharray: 132;
+  stroke-dashoffset: 132;
+  transition: stroke-dashoffset 0.3s ease;
+}
+
+.back-to-top:hover .btt-circle {
+  stroke-dashoffset: 0;
+}
+
+.btt-arrow {
+  position: absolute;
+  color: var(--text);
+  font-size: 1.2rem;
+}
+
+.back-to-top:hover .btt-arrow {
+  color: white;
+}

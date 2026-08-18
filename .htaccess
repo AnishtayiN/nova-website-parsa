@@ -1,0 +1,23 @@
+# ═══════════════════════════════════════════════
+#  Nova - Security (Apache)
+# ═══════════════════════════════════════════════
+
+# Disable directory listing
+Options -Indexes
+
+# Deny direct access to sensitive files
+<FilesMatch "\.(json|md|log|lock|ini|env|bak|old)$">
+  Require all denied
+</FilesMatch>
+
+# Security headers (second layer - also set in PHP)
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Hide PHP version
+<IfModule mod_php.c>
+  php_flag expose_php off
+</IfModule>

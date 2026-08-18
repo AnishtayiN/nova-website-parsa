@@ -1,0 +1,29 @@
+/* ═══════════════════════════════════════════════
+   نوآوا — مدیریت تم پنل مدیریت
+   ═══════════════════════════════════════════════ */
+
+:root {
+  --bg: #0b0b1e;
+  --bg2: #12122b;
+  --surface: rgba(255, 255, 255, 0.04);
+  --surface2: rgba(255, 255, 255, 0.08);
+  --border: rgba(255, 255, 255, 0.09);
+  --text: #e8e8f0;
+  --text2: #9d9db5;
+  --primary: #8b5cf6;
+  --accent: #06b6d4;
+  --danger: #ef4444;
+  --success: #10b981;
+  --gradient: linear-gradient(135deg, #8b5cf6, #06b6d4);
+  --radius: 14px;
+}
+
+[data-theme="light"] {
+  --bg: #f2f2fa;
+  --bg2: #e9e9f5;
+  --surface: rgba(255, 255, 255, 0.85);
+  --surface2: rgba(0, 0, 0, 0.05);
+  --border: rgba(0, 0, 0, 0.09);
+  --text: #191930;
+  --text2: #55557a;
+}

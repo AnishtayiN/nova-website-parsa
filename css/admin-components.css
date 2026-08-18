@@ -1,0 +1,124 @@
+/* ═══════════════════════════════════════════════
+   نوآوا — کامپوننت‌های مشترک پنل مدیریت
+   ═══════════════════════════════════════════════ */
+
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.toast.show {
+  opacity: 1;
+}
+
+.toast.ok {
+  background: var(--success);
+  color: white;
+}
+
+.toast.err {
+  background: var(--danger);
+  color: white;
+}
+
+.field {
+  margin-bottom: 1.5rem;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text2);
+}
+
+.field input,
+.field textarea,
+.field select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  transition: border-color var(--transition);
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.btn-save,
+.btn-reset,
+.btn-danger {
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn-save {
+  background: var(--primary);
+  color: white;
+  border: none;
+}
+
+.btn-save:hover {
+  background: var(--primary2);
+}
+
+.btn-reset {
+  background: var(--surface2);
+  color: var(--text);
+  border: none;
+}
+
+.btn-reset:hover {
+  background: var(--border);
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: white;
+  border: none;
+}
+
+.btn-danger:hover {
+  background: #dc2626;
+}
+
+.mini-btn {
+  background: var(--surface2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.mini-btn:hover {
+  background: var(--border);
+}
+
+.mini-btn.warn {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.mini-btn.warn:hover {
+  background: var(--danger);
+  color: white;
+}
