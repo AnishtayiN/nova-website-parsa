@@ -4,281 +4,259 @@
  *  نوآوا — پیکربندی مرکزی و امنیت
  *  - سشن امن، هدرهای امنیتی، CSRF
  *  - دیتابیس JSON با قفل‌گذاری فایل (flock)
+ *  - پشتیبانی از فایل تنظیمات محیطی (config.env.php)
  * ═══════════════════════════════════════════════
  */
 
-declare(strict_types=1);
+// بررسی وجود فایل تنظیمات محیطی
+$envConfigPath = __DIR__ . '/config.env.php';
+if (file_exists($envConfigPath)) {
+    require_once $envConfigPath;
+} else {
+    // تنظیمات پیش‌فرض در صورت عدم وجود config.env.php
+    if (!defined('DATA_DIR')) {
+        define('DATA_DIR', __DIR__ . '/data');
+    }
+    if (!defined('SESSION_NAME')) {
+        define('SESSION_NAME', 'NOVA_SESSION');
+    }
+    if (!defined('SESSION_LIFETIME')) {
+        define('SESSION_LIFETIME', 3600);
+    }
+    if (!defined('CSRF_TOKEN_LIFETIME')) {
+        define('CSRF_TOKEN_LIFETIME', 1800);
+    }
+    if (!defined('MAX_LOGIN_ATTEMPTS')) {
+        define('MAX_LOGIN_ATTEMPTS', 5);
+    }
+    if (!defined('LOCKOUT_TIME')) {
+        define('LOCKOUT_TIME', 900);
+    }
+    if (!defined('ADMIN_USERNAME')) {
+        define('ADMIN_USERNAME', 'admin');
+    }
+    if (!defined('ADMIN_PASSWORD_HASH')) {
+        // پسورد پیش‌فرض هش شده: "admin123"
+        define('ADMIN_PASSWORD_HASH', password_hash('admin123', PASSWORD_BCRYPT));
+    }
+    if (!defined('SITE_NAME')) {
+        define('SITE_NAME', 'نوآوا');
+    }
+    if (!defined('SITE_DESCRIPTION')) {
+        define('SITE_DESCRIPTION', 'استودیو خلاقیت دیجیتال');
+    }
+    if (!defined('SITE_URL')) {
+        define('SITE_URL', 'http://localhost/nova-website-parsa');
+    }
+    if (!defined('DEBUG_MODE')) {
+        define('DEBUG_MODE', false);
+    }
+    if (!defined('TIMEZONE')) {
+        define('TIMEZONE', 'Asia/Tehran');
+    }
+    if (!defined('LANGUAGE')) {
+        define('LANGUAGE', 'fa');
+    }
+}
 
-/* ── مدیریت خطا: نشت اطلاعات به کاربر ممنوع ── */
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
-ini_set('log_errors', '1');
+// تنظیمات خطا
+if (defined('DEBUG_MODE') && DEBUG_MODE) {
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+} else {
+    error_reporting(E_ALL);
+    ini_set('display_errors', 0);
+    ini_set('log_errors', 1);
+    ini_set('error_log', __DIR__ . '/error.log');
+}
 
-/* ── سشن با پیکربندی امن ── */
+// تنظیمات سشن
+ini_set('session.name', SESSION_NAME);
+ini_set('session.cookie_lifetime', SESSION_LIFETIME);
+ini_set('session.cookie_secure', true);
+ini_set('session.cookie_httponly', true);
+ini_set('session.cookie_samesite', 'Lax');
+ini_set('session.use_strict_mode', 1);
+
+// شروع سشن
 if (session_status() === PHP_SESSION_NONE) {
-    session_name('NOVA_SESS');
-    session_set_cookie_params([
-        'lifetime' => 0,
-        'path'     => '/',
-        'domain'   => '',
-        'secure'   => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
-        'httponly' => true,
-        'samesite' => 'Lax',
-    ]);
     session_start();
+    // جلوگیری از session fixation
+    if (!isset($_SESSION['initiated'])) {
+        session_regenerate_id(true);
+        $_SESSION['initiated'] = true;
+    }
 }
 
 /* ── هدرهای امنیتی ── */
-header('X-Content-Type-Options: nosniff');
-header('X-Frame-Options: SAMEORIGIN');
-header('Referrer-Policy: strict-origin-when-cross-origin');
-header('Permissions-Policy: geolocation=(), microphone=(), camera=()');
-header(
-    'Content-Security-Policy: ' .
-    "default-src 'self'; " .
-    "script-src 'self'; " .
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " .
-    "font-src 'self' https://fonts.gstatic.com; " .
-    "img-src 'self' data:; " .
-    "connect-src 'self'; " .
-    "base-uri 'self'; " .
-    "form-action 'self'; " .
-    'object-src \'none\''
-);
-header('Cache-Control: no-store, max-age=0');
+header("X-Content-Type-Options: nosniff");
+header("X-Frame-Options: SAMEORIGIN");
+header("X-XSS-Protection: 1; mode=block");
+header("Referrer-Policy: strict-origin-when-cross-origin");
+header("Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' fonts.gstatic.com; img-src 'self' data:; connect-src 'self'");
+header("Permissions-Policy: geolocation=(), microphone=(), camera=()");
 
 /* ── مسیرها و مقادیر پیش‌فرض ── */
-define('DATA_DIR', __DIR__ . '/data');
-
-// بارگذاری متغیرهای محیطی
-if (is_file(__DIR__ . '/config.env.php')) {
-    require __DIR__ . '/config.env.php';
-} else {
-    // تنظیمات پیش‌فرض
-    define('DEFAULT_ADMIN_USER', 'admin');
-    define('DEFAULT_ADMIN_PASS', bin2hex(random_bytes(8)));
-    define('ERROR_LOG_PATH', __DIR__ . '/data/error.log');
+if (!defined('DATA_DIR')) {
+    define('DATA_DIR', __DIR__ . '/data');
 }
 
-// اگر رمز پیش‌فرض خالی باشد، از کاربر خواسته می‌شود که در اولین ورود آن را تنظیم کند.
-if (DEFAULT_ADMIN_PASS === '') {
-    // در اولین اجرا، یک رمز موقت ایجاد می‌شود.
-    define('DEFAULT_ADMIN_PASS', bin2hex(random_bytes(8)));
-    error_log("[NOVA] رمز پیش‌فرض خالی است. یک رمز موقت ایجاد شد: " . DEFAULT_ADMIN_PASS);
+// ایجاد دایرکتوری data اگر وجود ندارد
+if (!file_exists(DATA_DIR)) {
+    mkdir(DATA_DIR, 0755, true);
 }
 
-/* ─────────── دیتابیس JSON با قفل فایل ─────────── */
+// فایل‌های پیش‌فرض دیتابیس
+$defaultFiles = [
+    'settings.json',
+    'users.json',
+    'messages.json',
+    'views.json',
+    'lockout.json'
+];
+
+// ایجاد فایل‌های پیش‌فرض در صورت عدم وجود
+foreach ($defaultFiles as $file) {
+    $filePath = DATA_DIR . '/' . $file;
+    if (!file_exists($filePath)) {
+        file_put_contents($filePath, '{}');
+    }
+}
+
+/* ── توابع کمکی ── */
 
 /**
- * خواندن امن یک فایل JSON (با قفل اشتراکی)
+ * دریافت تنظیمات از فایل JSON
  */
-function db_read(string $file, array $default): array
-{
-    $path = DATA_DIR . '/' . $file;
-    if (!is_file($path)) {
-        return $default;
+function get_json_data($filename) {
+    $filePath = DATA_DIR . '/' . $filename;
+    if (!file_exists($filePath)) {
+        return [];
     }
-    $h = @fopen($path, 'rb');
-    if ($h === false) {
-        return $default;
+    
+    $handle = fopen($filePath, 'r');
+    if ($handle === false) {
+        return [];
     }
-    flock($h, LOCK_SH);
-    $raw = stream_get_contents($h);
-    flock($h, LOCK_UN);
-    fclose($h);
-
-    $data = json_decode((string)$raw, true);
-    return is_array($data) ? $data : $default;
-}
-
-/**
- * نوشتن امن یک فایل JSON (با قفل انحصاری + برش قبلی)
- */
-function db_write(string $file, array $data): void
-{
-    if (!is_dir(DATA_DIR)) {
-        @mkdir(DATA_DIR, 0775, true);
+    
+    try {
+        $size = filesize($filePath);
+        if ($size === 0) {
+            return [];
+        }
+        
+        if (flock($handle, LOCK_SH)) {
+            $content = fread($handle, $size);
+            flock($handle, LOCK_UN);
+            $data = json_decode($content, true);
+            return is_array($data) ? $data : [];
+        }
+    } finally {
+        fclose($handle);
     }
-    $path = DATA_DIR . '/' . $file;
-    $h = @fopen($path, 'c+b');
-    if ($h === false) {
-        return;
-    }
-    flock($h, LOCK_EX);
-    ftruncate($h, 0);
-    fwrite($h, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
-    fflush($h);
-    flock($h, LOCK_UN);
-    fclose($h);
-}
-
-/* ─────────── داده‌های پیش‌فرض ─────────── */
-
-function settings_default(): array
-{
-    return [
-        'title'   => 'نوآوا | استودیو خلاقیت دیجیتال',
-        'heroSub' => 'با نوآوا، ایده‌هایت را به تجربه‌های دیجیتال خیره‌کننده تبدیل کن. طراحی، توسعه و برندینگ — همه در یک‌جا، با وسواس در جزئیات.',
-        'words'   => ['طراحی می‌کنیم', 'کد می‌زنیم', 'برند می‌سازیم', 'رویا می‌بافیم'],
-        'address' => 'تهران، خیابان ولیعصر، برج نوآوا، طبقه ۱۲',
-        'phone'   => '۰۲۱-۱۲۳۴۵۶۷۸',
-        'email'   => 'hello@nova.studio',
-        'theme'   => 'dark',
-    ];
-}
-
-function get_settings(): array
-{
-    $s = db_read('settings.json', []);
-    $merged = array_merge(settings_default(), $s);
-    if (!is_array($merged['words'])) {
-        $merged['words'] = settings_default()['words'];
-    }
-    return $merged;
+    
+    return [];
 }
 
 /**
- * ساخت خودکار داده‌های اولیه در اولین اجرا
- * (اکانت ادمین با رمز هش‌شده + تغییر اجباری رمز)
+ * ذخیره داده در فایل JSON با قفل‌گذاری
  */
-function db_bootstrap(): void
-{
-    if (!is_dir(DATA_DIR)) {
-        @mkdir(DATA_DIR, 0775, true);
+function save_json_data($filename, $data) {
+    $filePath = DATA_DIR . '/' . $filename;
+    $tempPath = tempnam(sys_get_temp_dir(), 'nova_');
+    
+    // نوشتن در فایل موقت
+    $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    file_put_contents($tempPath, $json);
+    
+    // انتقال به فایل اصلی با قفل
+    $handle = fopen($filePath, 'c');
+    if ($handle !== false && flock($handle, LOCK_EX)) {
+        rename($tempPath, $filePath);
+        flock($handle, LOCK_UN);
+        fclose($handle);
+        @unlink($tempPath);
+        return true;
     }
-    if (!is_file(DATA_DIR . '/settings.json')) {
-        db_write('settings.json', settings_default());
-    }
-    if (!is_file(DATA_DIR . '/messages.json')) {
-        db_write('messages.json', ['items' => []]);
-    }
-    if (!is_file(DATA_DIR . '/views.json')) {
-        db_write('views.json', ['total' => 0, 'daily' => []]);
-    }
-    if (!is_file(DATA_DIR . '/lockout.json')) {
-        db_write('lockout.json', ['failed' => 0, 'until' => 0]);
-    }
-    if (!is_file(DATA_DIR . '/users.json')) {
-        db_write('users.json', [
-            'items' => [[
-                'user'        => DEFAULT_ADMIN_USER,
-                'pass_hash'   => password_hash(DEFAULT_ADMIN_PASS, PASSWORD_DEFAULT),
-                'must_change' => true,
-                'created'     => date('c'),
-            ]],
-        ]);
-    }
-}
-
-/* ─────────── ابزارهای خروجی ─────────── */
-
-/** ماسک‌سازی امن خروجی HTML */
-function e(?string $s): string
-{
-    return htmlspecialchars((string)$s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    
+    @unlink($tempPath);
+    return false;
 }
 
 /**
- * لاگ خطاها در فایل مشخص شده
+ * بررسی وجود داده در دیتابیس
  */
-function log_error(string $message): void
-{
-    $logPath = ERROR_LOG_PATH;
-    $timestamp = date('Y-m-d H:i:s');
-    $logMessage = "[$timestamp] $message\n";
-    error_log($logMessage, 3, $logPath);
-}
-
-/** خروجی JSON یکنواخت */
-function json_out(array $data, int $code = 200): void
-{
-    http_response_code($code);
-    header('Content-Type: application/json; charset=utf-8');
-    echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP);
-    exit;
-}
-
-function json_error(string $msg, int $code = 400): void
-{
-    log_error("JSON Error [$code]: $msg");
-    json_out(['ok' => false, 'error' => $msg], $code);
-}
-
-/* ─────────── CSRF ─────────── */
-
-function csrf_token(): string
-{
-    if (empty($_SESSION['csrf'])) {
-        $_SESSION['csrf'] = bin2hex(random_bytes(32));
-    }
-    return $_SESSION['csrf'];
-}
-
-function verify_csrf(): void
-{
-    $t = $_POST['csrf'] ?? ($_SERVER['HTTP_X_CSRF_TOKEN'] ?? '');
-    if (!is_string($t) || $t === '' || !hash_equals($_SESSION['csrf'] ?? '', $t)) {
-        json_error('نشانه‌ی امنیتی (CSRF) نامعتبر است. صفحه را تازه‌سازی کنید و دوباره تلاش کنید.', 403);
-    }
-}
-
-/* ─────────── دسترسی ادمین ─────────── */
-
-function is_admin(): bool
-{
-    return !empty($_SESSION['admin']);
-}
-
-function require_admin(): void
-{
-    if (!is_admin()) {
-        json_error('دسترسی غیرمجاز. ابتدا وارد شوید.', 401);
-    }
-}
-
-/* ─────────── اعتبارسنجی ورودی ─────────── */
-
-/** طول رشته با پشتیبانی از فونت کامل (فارسی) */
-function len(string $s): int
-{
-    return function_exists('mb_strlen') ? mb_strlen($s, 'UTF-8') : strlen($s);
-}
-
-/** خواندن رشته از POST با محدودیت طول */
-function post_str(string $key, int $max = 255): string
-{
-    $v = $_POST[$key] ?? '';
-    if (!is_string($v)) {
-        json_error('ورودی نامعتبر است.', 400);
-    }
-    $v = trim($v);
-    if (len($v) > $max) {
-        json_error('طول ورودی بیش از حد مجاز است.', 400);
-    }
-    return $v;
-}
-
-function client_ip(): string
-{
-    $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
-    return filter_var($ip, FILTER_VALIDATE_IP) ? $ip : '0.0.0.0';
-}
-
-/** شناسه‌ی یکتا برای رکوردها */
-function new_id(): string
-{
-    return (string)time() . (string)random_int(100000, 999999);
+function db_has_data($filename) {
+    $data = get_json_data($filename);
+    return !empty($data);
 }
 
 /**
- * بررسی اینکه آیا دیتابیس داده دارد
+ * دریافت تنظیمات سایت
  */
-function db_has_data(): bool
-{
-    return is_file(DATA_DIR . '/settings.json') && filesize(DATA_DIR . '/settings.json') > 2;
+function get_settings() {
+    static $settings = null;
+    if ($settings === null) {
+        $settings = get_json_data('settings.json');
+    }
+    return $settings;
 }
 
-// فقط در اولین اجرا فراخوانی شود
-if (!db_has_data()) {
-    db_bootstrap();
+/**
+ * دریافت کاربر ادمین
+ */
+function get_admin_user() {
+    $users = get_json_data('users.json');
+    return $users['admin'] ?? null;
 }
+
+/**
+ * اسکیپ کردن خروجی برای جلوگیری از XSS
+ */
+function e($string) {
+    return htmlspecialchars($string, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
+
+/**
+ * تولید توکن CSRF
+ */
+function generate_csrf_token() {
+    if (empty($_SESSION['csrf_token']) || !isset($_SESSION['csrf_token_expires']) || $_SESSION['csrf_token_expires'] < time()) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        $_SESSION['csrf_token_expires'] = time() + CSRF_TOKEN_LIFETIME;
+    }
+    return $_SESSION['csrf_token'];
+}
+
+/**
+ * بررسی توکن CSRF
+ */
+function verify_csrf_token($token) {
+    return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
+}
+
+/**
+ * دریافت آدرس IP کاربر
+ */
+function get_client_ip() {
+    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+        $ip = $_SERVER['HTTP_CLIENT_IP'];
+    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+    } else {
+        $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    }
+    return $ip;
+}
+
+/**
+ * لاگ کردن خطاها
+ */
+function log_error($message) {
+    if (DEBUG_MODE) {
+        error_log('[NOVA ERROR] ' . date('Y-m-d H:i:s') . ' - ' . $message);
+    }
+}
+
+// پایان فایل config.php
+?>
